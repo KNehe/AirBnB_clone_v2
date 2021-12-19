@@ -73,7 +73,7 @@ class HBNBCommand(cmd.Cmd):
                 pline = pline[2].strip()  # pline is now str
                 if pline:
                     # check for *args or **kwargs
-                    if pline[0] is '{' and pline[-1] is'}'\
+                    if pline[0] == '{' and pline[-1] == '}'\
                             and type(eval(pline)) is dict:
                         _args = pline
                     else:
@@ -118,13 +118,40 @@ class HBNBCommand(cmd.Cmd):
         if not args:
             print("** class name missing **")
             return
-        elif args not in HBNBCommand.classes:
+        data = args.split(" ")
+        if data[0] not in HBNBCommand.classes:
             print("** class doesn't exist **")
             return
+        try:
+            obj = eval(data[0])()
+            for i in range(1, len(data)):
+                key_values = data[i].split("=")
+                key = key_values[0]
+                value = key_values[1]
+                # formating the value
+                if value[0] == '"' and value[-1] == '"':
+                    value = value.strip('"')\
+                                 .replace('\"', '\\"').replace("_", "")
+                elif value.isdigit():
+                    value = int(value)
+                else:
+                    try:
+                        value = float(value)
+                    except ValueError:
+                        continue
+                setattr(obj, key, value)
+        except Exception:
+            pass
+
+        obj.save()
+        print(obj.id)
+
+        """
         new_instance = HBNBCommand.classes[args]()
         storage.save()
         print(new_instance.id)
         storage.save()
+        """
 
     def help_create(self):
         """ Help information for the create method """
@@ -238,7 +265,7 @@ class HBNBCommand(cmd.Cmd):
 
         # isolate cls from id/args, ex: (<cls>, delim, <id/args>)
         args = args.partition(" ")
-        if args[0]:
+        if args[0] != ' ':
             c_name = args[0]
         else:  # class name not present
             print("** class name missing **")
@@ -249,7 +276,7 @@ class HBNBCommand(cmd.Cmd):
 
         # isolate id from args
         args = args[2].partition(" ")
-        if args[0]:
+        if args[0] != ' ':
             c_id = args[0]
         else:  # id not present
             print("** instance id missing **")
@@ -319,6 +346,7 @@ class HBNBCommand(cmd.Cmd):
         """ Help information for the update class """
         print("Updates an object with new information")
         print("Usage: update <className> <id> <attName> <attVal>\n")
+
 
 if __name__ == "__main__":
     HBNBCommand().cmdloop()
