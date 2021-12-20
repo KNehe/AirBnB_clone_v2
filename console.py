@@ -115,23 +115,19 @@ class HBNBCommand(cmd.Cmd):
 
     def do_create(self, args):
         """ Create an object of any class"""
-        if not args:
-            print("** class name missing **")
-            return
-        data = args.split(" ")
-        if data[0] not in HBNBCommand.classes:
-            print("** class doesn't exist **")
-            return
         try:
+            if not args:
+                raise SyntaxError()
+            data = args.split(" ")
             obj = eval(data[0])()
             for i in range(1, len(data)):
                 key_values = data[i].split("=")
                 key = key_values[0]
                 value = key_values[1]
                 # formating the value
-                if value[0] == '"' and value[-1] == '"':
-                    value = value.strip('"')\
-                                 .replace('\"', '\\"').replace("_", "")
+                if value[0][:1] == "\"" and value[0][-1:] == "\"":
+                    value = key_values[1][1:-1].replace('_', ' ')\
+                                               .replace('\"', '\\"')
                 elif value.isdigit():
                     value = int(value)
                 else:
@@ -140,11 +136,13 @@ class HBNBCommand(cmd.Cmd):
                     except ValueError:
                         continue
                 setattr(obj, key, value)
-        except Exception:
-            pass
 
-        obj.save()
-        print(obj.id)
+            obj.save()
+            print(obj.id)
+        except SyntaxError:
+            print("** class name missing **")
+        except NameError:
+            print("** class doesn't exist **")
 
         """
         new_instance = HBNBCommand.classes[args]()
