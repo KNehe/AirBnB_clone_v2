@@ -119,7 +119,7 @@ class HBNBCommand(cmd.Cmd):
             if not args:
                 raise SyntaxError()
             data = args.split(" ")
-            obj = eval(data[0])()
+            obj = eval("{}()".format(data[0]))
             for i in range(1, len(data)):
                 key_values = data[i].split("=")
                 key = key_values[0]
@@ -141,7 +141,8 @@ class HBNBCommand(cmd.Cmd):
             print(obj.id)
         except SyntaxError:
             print("** class name missing **")
-        except NameError:
+        except NameError as e:
+            print(e)
             print("** class doesn't exist **")
 
         """
