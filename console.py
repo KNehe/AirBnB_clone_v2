@@ -128,20 +128,16 @@ class HBNBCommand(cmd.Cmd):
                 key_values = data[i].split("=")
                 key = key_values[0]
                 value = key_values[1]
-                # formating the value
                 if value[0][:1] == "\"" and value[0][-1:] == "\"":
                     value = key_values[1][1:-1].replace('_', ' ')\
                                                .replace('\"', '\\"')
                 elif value.isdigit():
                     value = int(value)
                 else:
-                    try:
-                        value = float(value)
-                    except ValueError:
-                        continue
+                    value = float(value)
                 setattr(obj, key, value)
             except Exception:
-                continue
+                pass
 
         obj.save()
         print(obj.id)
