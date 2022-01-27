@@ -60,7 +60,7 @@ class DBStorage:
         """delete obj from the current database session."""
         if obj:
             self.__session.delete(obj)
-    
+
     def reload(self):
         """create all tables in the database"""
         Base.metadata.create_all(self.__engine)
@@ -68,3 +68,7 @@ class DBStorage:
                                        expire_on_commit=False)
         Session = scoped_session(session_factory)
         self.__session = Session()
+
+    def close(self):
+        """Close the db session"""
+        self.__session.close()
