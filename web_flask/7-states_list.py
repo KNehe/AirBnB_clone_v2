@@ -23,6 +23,7 @@ def list_states():
 
 @app.teardown_appcontext
 def remove_session(context):
+    """close the database session"""
     storage.close()
 
 
